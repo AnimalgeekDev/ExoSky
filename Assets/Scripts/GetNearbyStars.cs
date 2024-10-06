@@ -48,8 +48,9 @@ public class GetNearbyStars : MonoBehaviour
     // Referencia al objeto "CenterStars" en la escena
     public Transform centerStars;
     public StarPosition starPositions;
+    public GameObject planet;
 
-    private string apiUrl = "http://127.0.0.1:8000/gaia/nearbystars/"; // Replace with your backend URL
+    private string apiUrl = "http://172.20.10.2:8000/gaia/nearbystars/"; // Replace with your backend URL
 
     // Start is called before the first frame update
     void Start()
@@ -66,12 +67,14 @@ public class GetNearbyStars : MonoBehaviour
 
     private async void GetStarsCloud()
     {
+        Exoplanet exoplanet = GlobalData.Exoplanets[0];
+        planet.GetComponent<Renderer>().material = new Material(exoplanet.material);
         // Create the JSON data to send
         string jsonData = JsonUtility.ToJson(new CloudNearby
         { 
-            ra = 181.31578544866565,
-            dec = 76.90533593519827,
-            parsecs = 100.86132547317047,
+            ra = exoplanet.ra,
+            dec = exoplanet.dec,
+            parsecs = exoplanet.sy_dist,
             visible_distance = 100,
             n_stars = 5000
         });

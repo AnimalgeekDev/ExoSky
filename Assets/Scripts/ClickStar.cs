@@ -35,14 +35,14 @@ public class ConstellarGuide
 [System.Serializable]
 public class SaveData
 {
-    public string user_name = "Breyner";
-    public string pl_name = "HD 12661 b";
+    public string user_name = PlayerPrefs.GetString("Username", "Guest");;
+    public string pl_name = GlobalData.Exoplanets[0].pl_name;
     public List<string> coordenates = new List<string>(); // Cambiado a List<string>
 }
 
 public class ClickStar : MonoBehaviour
 {
-    private string url = "http://127.0.0.1:8000/constellations/constellationinsert/";
+    private string url = "http://172.20.10.2:8000/constellations/constellationinsert/";
     public float maxDistance = 500f;
     public List<Constellar> constellars = new List<Constellar>();
     public bool createMode;

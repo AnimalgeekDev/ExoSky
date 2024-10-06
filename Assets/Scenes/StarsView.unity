@@ -1681,6 +1681,7 @@ MonoBehaviour:
     color_r: []
     color_g: []
     color_b: []
+  planet: {fileID: 654465051}
 --- !u!1 &2102169665
 GameObject:
   m_ObjectHideFlags: 0
