@@ -9,14 +9,9 @@ public class MainCamera : MonoBehaviour
     public float shiftAdd = 250.0f;   // Aumenta al mantener Shift
     public float maxShift = 1000.0f;  // Velocidad máxima con Shift
     public float camSens = 0.25f;     // Sensibilidad del ratón
-    /*
-    [Header("Zoom Settings")]
-    public float zoomSpeed = 10f;     // Velocidad del zoom
-    public float minZoom = 20f;       // Valor mínimo del campo de visión (Zoom in)
-    public float maxZoom = 60f;       // Valor máximo del campo de visión (Zoom out)
-    */
+
     private Vector3 lastMouse = new Vector3(255, 255, 255); // Posición inicial del ratón
-    private float totalRun = 1.0f;
+    private bool isDragging = false;  // Controla si se está arrastrando con el ratón
     private Camera cam;               // Referencia a la cámara
 
     void Start()
@@ -26,46 +21,57 @@ public class MainCamera : MonoBehaviour
 
     void Update()
     {
-        // Controlar la rotación con el ratón
-        lastMouse = Input.mousePosition - lastMouse;
-        lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0);
-        lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x, transform.eulerAngles.y + lastMouse.y, 0);
-        transform.eulerAngles = lastMouse;
-        lastMouse = Input.mousePosition;
+        // Controlar la rotación solo si se está arrastrando con el botón izquierdo del ratón
+        if (Input.GetMouseButtonDown(0)) // Si se presiona el botón izquierdo
+        {
+            isDragging = true;
+            lastMouse = Input.mousePosition; // Guardar la posición inicial del ratón al presionar
+        }
+
+        if (Input.GetMouseButtonUp(0)) // Si se suelta el botón izquierdo
+        {
+            isDragging = false;
+        }
+
+        if (isDragging)
+        {
+            Vector3 mouseDelta = Input.mousePosition - lastMouse;
+            Vector3 rotation;
+
+            // Comprobar si la cámara está en el sur (rotación Z cercana a 180 grados o -180 grados)
+            if (Mathf.Abs(transform.eulerAngles.z - 180f) < 1f || Mathf.Abs(transform.eulerAngles.z) > 179f)
+            {
+                // Invertir tanto el control vertical como horizontal en el sur
+                rotation = new Vector3(mouseDelta.y * camSens, -mouseDelta.x * camSens, 0);
+            }
+            else
+            {
+                // Controles normales si no está en el sur
+                rotation = new Vector3(-mouseDelta.y * camSens, mouseDelta.x * camSens, 0);
+            }
+
+            transform.eulerAngles += rotation; // Aplicar la rotación a la cámara
+            lastMouse = Input.mousePosition;   // Actualizar la última posición del ratón
+        }
 
         // Controlar el movimiento con las teclas
-        float f = 0.0f;
         Vector3 p = GetBaseInput();
         if (p.sqrMagnitude > 0)
         {
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                totalRun += Time.deltaTime;
-                p = p * totalRun * shiftAdd;
+                p = p * shiftAdd;
                 p.x = Mathf.Clamp(p.x, -maxShift, maxShift);
                 p.y = Mathf.Clamp(p.y, -maxShift, maxShift);
                 p.z = Mathf.Clamp(p.z, -maxShift, maxShift);
             }
             else
             {
-                totalRun = Mathf.Clamp(totalRun * 0.5f, 1f, 1000f);
                 p = p * mainSpeed;
             }
 
             p = p * Time.deltaTime;
-            Vector3 newPosition = transform.position;
-            if (Input.GetKey(KeyCode.Space))
-            {
-                // Moverse solo en los ejes X y Z
-                transform.Translate(p);
-                newPosition.x = transform.position.x;
-                newPosition.z = transform.position.z;
-                transform.position = newPosition;
-            }
-            else
-            {
-                transform.Translate(p);
-            }
+            transform.Translate(p);
         }
 
         // Controlar el zoom con la rueda del ratón
@@ -93,15 +99,15 @@ public class MainCamera : MonoBehaviour
         }
         return p_Velocity;
     }
+
     /*
     private void HandleZoom()
     {
-        // Detectar la rueda del ratón para ajustar el campo de visión (FOV) de la cámara
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0.0f)
         {
             cam.fieldOfView -= scroll * zoomSpeed;
-            cam.fieldOfView = Mathf.Clamp(cam.fieldOfView, minZoom, maxZoom); // Limitar el FOV entre minZoom y maxZoom
+            cam.fieldOfView = Mathf.Clamp(cam.fieldOfView, minZoom, maxZoom);
         }
     }
     */

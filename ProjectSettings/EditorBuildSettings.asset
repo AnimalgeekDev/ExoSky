@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Select_Angle_Scene.unity
     guid: 3511682b86f9fc345b9feb14de6fee70
+  - enabled: 1
+    path: Assets/Scenes/StarsView.unity
+    guid: da4ae5e0da89a2b45a8eb8b454099c96
   m_configObjects: {}

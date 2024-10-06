@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class TextClickHandler : MonoBehaviour, IPointerClickHandler
+public class CameraSelectionHandler : MonoBehaviour, IPointerClickHandler
 {
     // The number to pass to the next scene
     public int elementNumber; // Set this in the Inspector for each text object
@@ -22,7 +22,6 @@ public class TextClickHandler : MonoBehaviour, IPointerClickHandler
         PlayerPrefs.SetInt("PassedNumber", number);
         PlayerPrefs.Save(); // Save PlayerPrefs
 
-        // Load the next scene (replace "NextSceneName" with the actual name of your scene)
-        SceneManager.LoadScene("NextSceneName");
+        SceneManager.LoadScene("StarsView");
     }
 }

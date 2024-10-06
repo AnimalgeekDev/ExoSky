@@ -170,7 +170,7 @@ Camera:
   m_ShutterSpeed: 0.005
   m_Aperture: 16
   m_FocusDistance: 10
-  m_FocalLength: 50
+  m_FocalLength: 28.477282
   m_BladeCount: 5
   m_Curvature: {x: 2, y: 11}
   m_BarrelClipping: 0.25
@@ -184,8 +184,8 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
+  far clip plane: 100
+  field of view: 45.7
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -212,7 +212,7 @@ Transform:
   m_GameObject: {fileID: 582060965}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -37.6}
+  m_LocalPosition: {x: 0, y: 5.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -234,9 +234,6 @@ MonoBehaviour:
   shiftAdd: 250
   maxShift: 1000
   camSens: 0.25
-  zoomSpeed: 10
-  minZoom: 20
-  maxZoom: 60
 --- !u!114 &582060970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -418,7 +415,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 787cb25de3401c44b939f2599cda764c, type: 2}
+  - {fileID: 2100000, guid: 836dc6e00bc7f834fbe8b7f94db4c52f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
