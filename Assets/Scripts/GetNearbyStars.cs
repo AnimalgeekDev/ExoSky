@@ -47,6 +47,7 @@ public class GetNearbyStars : MonoBehaviour
 {    
     // Referencia al objeto "CenterStars" en la escena
     public Transform centerStars;
+    public StarPosition starPositions;
 
     private string apiUrl = "http://127.0.0.1:8000/gaia/nearbystars/"; // Replace with your backend URL
 
@@ -97,35 +98,32 @@ public class GetNearbyStars : MonoBehaviour
                 Debug.Log("Respuesta de la API: " + responseBody);
 
                 // Parsear el array de posiciones desde el JSON de la respuesta
-                StarPosition starPositions = JsonUtility.FromJson<StarPosition>(responseBody);
+                this.starPositions = JsonUtility.FromJson<StarPosition>(responseBody);
 
-                int numStars = starPositions.X_sphere.Length;
+                int numStars = this.starPositions.X_sphere.Length;
 
                 Debug.Log("numStars: " + numStars);
 
                 // Crear esferas en las posiciones XYZ
                 for (int i = 0; i < numStars; i++)
                 {
-                    Vector3 position = new Vector3(starPositions.X_sphere[i], starPositions.Y_sphere[i], starPositions.Z_sphere[i]);
+                    Vector3 position = new Vector3(this.starPositions.X_sphere[i], this.starPositions.Y_sphere[i], this.starPositions.Z_sphere[i]);
 
                     GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
                     // Asignar el nombre usando DESIGNATION
-                    sphere.name = starPositions.DESIGNATION[i];
+                    sphere.name = this.starPositions.DESIGNATION[i];
 
                     // Crear una esfera en la posición especificada
                     sphere.transform.position = position;
 
                     // Ajustar la escala de la esfera usando radius_sphere
-                    float radius = starPositions.radius_sphere[i];
+                    float radius = this.starPositions.radius_sphere[i];
                     sphere.transform.localScale = new Vector3(radius, radius, radius);
 
                     // Cambiar el color de la esfera usando los valores de color_r, color_g, color_b
                     Renderer sphereRenderer = sphere.GetComponent<Renderer>();
-                    float r = starPositions.color_r[i] / 255f;  // Normalizar el valor a un rango entre 0 y 1
-                    float g = starPositions.color_g[i] / 255f;
-                    float b = starPositions.color_b[i] / 255f;
-                    sphereRenderer.material.color = new Color(r, g, b);
+                    sphereRenderer.material.color = new Color(this.starPositions.color_r[i], this.starPositions.color_g[i], this.starPositions.color_b[i]);
 
                     // Hacer de "CenterStars" el padre de la esfera
                     sphere.transform.parent = centerStars;
