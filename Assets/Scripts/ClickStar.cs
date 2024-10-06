@@ -1,8 +1,10 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 using System.Text;
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -34,8 +36,8 @@ public class ConstellarGuide
 public class SaveData
 {
     public string user_name = "Breyner";
-    public string pl_name = "AAAA";
-    public List<string> coordinates = new List<string>(); // Cambiado a List<string>
+    public string pl_name = "HD 12661 b";
+    public List<string> coordenates = new List<string>(); // Cambiado a List<string>
 }
 
 public class ClickStar : MonoBehaviour
@@ -46,7 +48,6 @@ public class ClickStar : MonoBehaviour
     public bool createMode;
     public GameObject panelCreate;
     public GameObject panelSave;
-    public InputField inputName;
 
     private GameObject selectedStarA;
     private GameObject selectedStarB;
@@ -170,35 +171,46 @@ public class ClickStar : MonoBehaviour
         // Crear el JSON para enviar
         var saveData = new SaveData
         {
-            coordinates = new List<string>()
+            coordenates = new List<string>()
         };
 
         // Agregar las coordenadas como pares
         foreach (var guide in lastConstellar.constellarsGuide)
         {
-            saveData.coordinates.Add($"{guide.starA}, {guide.starB}");
+            saveData.coordenates.Add($"{guide.starA}, {guide.starB}");
         }
 
         string jsonData = JsonUtility.ToJson(saveData);
 
-        // Crear una nueva solicitud para enviar el JSON al backend
-        var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+        Debug.Log(jsonData);
 
-        try
+        // Create a new request to send the JSON to the backend
+        using (var client = new HttpClient())
         {
-            // Enviar la solicitud POST
-            var response = await this.client.PostAsync(this.url, content); // Reemplaza con tu URL de API
+            // Configurar el cliente
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            // Asegurarse de que la respuesta fue exitosa
-            response.EnsureSuccessStatusCode();
+            // Crear el contenido de la solicitud
+            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
-            // Leer el contenido de la respuesta
-            var responseBody = await response.Content.ReadAsStringAsync();
-            Debug.Log("Respuesta de la API: " + responseBody);
-        }
-        catch (HttpRequestException e)
-        {
-            Debug.Log("Error en la solicitud: " + e.Message);
+            Debug.Log(content);
+
+            try
+            {
+                // Enviar la solicitud POST
+                var response = await client.PostAsync(this.url, content); // Reemplaza con tu URL de API
+
+                // Asegurarse de que la respuesta fue exitosa
+                response.EnsureSuccessStatusCode();
+
+                // Leer el contenido de la respuesta
+                var responseBody = await response.Content.ReadAsStringAsync();
+                Debug.Log("Respuesta de la API: " + responseBody);
+            }
+            catch (HttpRequestException e)
+            {
+                Debug.Log("Error en la solicitud: " + e.Message);
+            }
         }
     }
 
