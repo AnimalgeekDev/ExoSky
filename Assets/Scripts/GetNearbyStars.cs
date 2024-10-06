@@ -49,8 +49,9 @@ public class GetNearbyStars : MonoBehaviour
     public Transform centerStars;
     public StarPosition starPositions;
     public GameObject planet;
+    public GameObject panelLoading;
 
-    private string apiUrl = "http://172.20.10.2:8000/gaia/nearbystars/"; // Replace with your backend URL
+    private string apiUrl = "http://127.0.0.1:8000/gaia/nearbystars/"; // Replace with your backend URL
 
     // Start is called before the first frame update
     void Start()
@@ -131,6 +132,9 @@ public class GetNearbyStars : MonoBehaviour
                     // Hacer de "CenterStars" el padre de la esfera
                     sphere.transform.parent = centerStars;
                 }
+
+                PlayerPrefs.SetString("onLoadStars", "true");
+                this.panelLoading.SetActive(false);
             }
             catch (HttpRequestException e)
             {

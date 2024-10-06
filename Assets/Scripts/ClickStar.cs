@@ -40,9 +40,30 @@ public class SaveData
     public List<string> coordenates = new List<string>(); // Cambiado a List<string>
 }
 
+[System.Serializable]
+public class ConstellarDataArray
+{
+    public ConstellarDataFromJson[] result;
+}
+
+[System.Serializable]
+public class ConstellarDataFromJson
+{
+    public int id;
+    public string exoplanet;
+    public string user;
+    public string[] coordenates;
+}
+
+public class GetExoplanet
+{
+    public string pl_name;
+}
+
 public class ClickStar : MonoBehaviour
 {
-    private string url = "http://172.20.10.2:8000/constellations/constellationinsert/";
+    private string url = "http://127.0.0.1:8000/constellations/constellationinsert/";
+    private string urlConstellations = "http://127.0.0.1:8000/constellations/constellationsbyexoplanet/";
     public float maxDistance = 500f;
     public List<Constellar> constellars = new List<Constellar>();
     public bool createMode;
@@ -66,7 +87,13 @@ public class ClickStar : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && createMode)
         {
-            SelectStars();
+            this.SelectStars();
+        }
+
+        if(PlayerPrefs.GetString("onLoadStars", "") == "true")
+        {
+            this.GetConstelars();
+            PlayerPrefs.SetString("onLoadStars", "false");
         }
     }
 
@@ -230,5 +257,89 @@ public class ClickStar : MonoBehaviour
     private void CreateInitialConstellar()
     {
         constellars.Add(new Constellar()); // Crear una constelación inicial
+    }
+
+    private async void GetConstelars()
+    {
+        // Create a new request to send the JSON to the backend
+        using (var client = new HttpClient())
+        {
+            // Configurar el cliente
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            // Crear el contenido de la solicitud
+            var content = new StringContent(JsonUtility.ToJson(new GetExoplanet{
+                pl_name = "Kepler-29 c"
+            }), Encoding.UTF8, "application/json");
+
+            Debug.Log(content);
+
+            try
+            {
+                // Enviar la solicitud POST
+                var response = await client.PostAsync(this.urlConstellations, content); // Reemplaza con tu URL de API
+
+                // Asegurarse de que la respuesta fue exitosa
+                response.EnsureSuccessStatusCode();
+
+                // Leer el contenido de la respuesta
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                this.CreateOldConnections(responseBody);
+            }
+            catch (HttpRequestException e)
+            {
+                Debug.Log("Error en la solicitud: " + e.Message);
+            }
+        }
+    }
+
+    public void CreateOldConnections(string oldConstellars)
+    {
+        Debug.Log(oldConstellars.GetType());
+        // Deserializar el JSON
+        var constellarsData = JsonUtility.FromJson<ConstellarDataArray>(oldConstellars);
+        Debug.Log(constellarsData);
+
+        // Crear un nuevo Constellar
+        Constellar newConstellar = new Constellar();
+
+        foreach(var constellarData in constellarsData.result)
+        {
+            // Llenar la lista de ConstellarGuide con las coordenadas
+            foreach (var coordinate in constellarData.coordenates)
+            {
+                // Separar las estrellas por ", "
+                string[] stars = coordinate.Split(new string[] { ", " }, StringSplitOptions.None);
+                if (stars.Length == 2)
+                {
+                    ConstellarGuide guide = new ConstellarGuide(stars[0], stars[1]);
+                    newConstellar.constellarsGuide.Add(guide);
+                }
+            }
+        }
+
+        foreach (ConstellarGuide guide in newConstellar.constellarsGuide)
+        {
+            if (!guide.isCreated)
+            {
+                GameObject starA = GameObject.Find(guide.starA);
+                GameObject starB = GameObject.Find(guide.starB);
+
+                if (starA != null && starB != null)
+                {
+                    GameObject line = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    Vector3 midpoint = (starA.transform.position + starB.transform.position) / 2;
+                    line.transform.position = midpoint;
+                    Vector3 direction = starB.transform.position - starA.transform.position;
+                    float distance = direction.magnitude;
+                    line.transform.localScale = new Vector3(0.1f, distance / 2, 0.1f);
+                    line.transform.up = direction.normalized;
+
+                    guide.line = line; // Asignar línea
+                    guide.isCreated = true; // Marcar como creada
+                }
+            }
+        }
     }
 }

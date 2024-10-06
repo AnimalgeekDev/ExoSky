@@ -16,7 +16,7 @@ public class AuthController : MonoBehaviour
 {
     public InputField loginUsernameField; // Legacy InputField for username
     public Text errorMessage; // Text for showing error when username is empty
-    private string url = "http://172.20.10.2:8000/users/login/";
+    private string url = "http://127.0.0.1:8000/users/login/";
 
 
     public void Continue()
@@ -65,7 +65,7 @@ public class AuthController : MonoBehaviour
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
 
-            Debug.Log("Envío con " + bodyRaw);
+            Debug.Log("Envï¿½o con " + bodyRaw);
 
             // Enviar la solicitud y esperar la respuesta
             yield return request.SendWebRequest();

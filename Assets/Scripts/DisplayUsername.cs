@@ -18,7 +18,7 @@ public class DisplayUsername : MonoBehaviour
     public Text panel_4;
     public Text panel_5;
     public GameObject[] planets;
-    private string url = "http://172.20.10.2:8000/exoplanets/getrandomfrombd/";
+    private string url = "http://127.0.0.1:8000/exoplanets/getrandomfrombd/";
     private string textureFolderPath = "RandomTextures";
 
     [System.Serializable]
@@ -134,10 +134,10 @@ public class DisplayUsername : MonoBehaviour
             return;
         }
 
-        // Crear una lista para realizar un seguimiento de los índices de los materiales utilizados
+        // Crear una lista para realizar un seguimiento de los ï¿½ndices de los materiales utilizados
         HashSet<int> usedIndices = new HashSet<int>();
 
-        // Asignar materiales aleatorios a las esferas y guardar el índice en cada exoplaneta
+        // Asignar materiales aleatorios a las esferas y guardar el ï¿½ndice en cada exoplaneta
         for (int i = 0; i < planets.Length && i < GlobalData.Exoplanets.Count; i++)
         {
             GameObject planet = planets[i];
@@ -145,13 +145,13 @@ public class DisplayUsername : MonoBehaviour
 
             int randomIndex;
 
-            // Asegurarse de que el índice aleatorio no se repita
+            // Asegurarse de que el ï¿½ndice aleatorio no se repita
             do
             {
                 randomIndex = UnityEngine.Random.Range(0, materials.Length);
             } while (usedIndices.Contains(randomIndex));
 
-            // Agregar el índice a la lista de utilizados
+            // Agregar el ï¿½ndice a la lista de utilizados
             usedIndices.Add(randomIndex);
 
             // Asignar el material al planeta (sin instanciar el material)
@@ -160,7 +160,7 @@ public class DisplayUsername : MonoBehaviour
                 planet.GetComponent<Renderer>().material = materials[randomIndex];
             }
 
-            // Guardar el índice del material en el exoplaneta
+            // Guardar el ï¿½ndice del material en el exoplaneta
             exoplanet.material = materials[randomIndex];
             Debug.Log("Asignado material " + materials[randomIndex].name + " al exoplaneta: " + exoplanet.pl_name);
         }

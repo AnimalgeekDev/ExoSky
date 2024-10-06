@@ -17,7 +17,7 @@ public class SearchBar : MonoBehaviour
     public InputField searchInputField; // Assign the InputField from the inspector
     public Button searchButton; // Assign the Button from the inspector
     public Text feedbackText; // Text component to display feedback messages (optional)
-    private string url = "http://172.20.10.2:8000/exoplanets/getbyname/"; // Replace with your backend URL
+    private string url = "http://127.0.0.1:8000/exoplanets/getbyname/"; // Replace with your backend URL
 
     private void Start()
     {
