@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
 public class Exoplanet
@@ -12,6 +13,7 @@ public class Exoplanet
     public int disc_year;
     public string discoverymethod;
     public string disc_facility;
+    public Material material;
 }
 
 [System.Serializable]

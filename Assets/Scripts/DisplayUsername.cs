@@ -17,7 +17,15 @@ public class DisplayUsername : MonoBehaviour
     public Text panel_3;
     public Text panel_4;
     public Text panel_5;
+    public GameObject[] planets;
     private string url = "http://172.20.10.2:8000/exoplanets/getrandomfrombd/";
+    private string textureFolderPath = "RandomTextures";
+
+    [System.Serializable]
+    public class JsonData
+    {
+        public int limit;
+    }
 
     private void Start()
     {
@@ -34,10 +42,7 @@ public class DisplayUsername : MonoBehaviour
     private IEnumerator LoadExoplanets()
     {
         // Crear el objeto JSON usando un Dictionary
-        var jsonData = new Dictionary<string, int>
-        {
-            { "limit", 5 }
-        };
+        var jsonData = new JsonData { limit = 5 };
         string json = JsonUtility.ToJson(jsonData);
 
         // Crear la solicitud POST
@@ -65,7 +70,7 @@ public class DisplayUsername : MonoBehaviour
                 // Asegurarnos de que tengamos al menos 5 planetas
                 if (exoplanets.Length >= 5)
                 {
-                    Debug.Log(exoplanets[0].pl_name);
+                    Debug.Log("Datos recibidos: " + exoplanets.Length);
                     planet_1.text = exoplanets[0].pl_name;
                     planet_2.text = exoplanets[1].pl_name;
                     planet_3.text = exoplanets[2].pl_name;
@@ -74,41 +79,93 @@ public class DisplayUsername : MonoBehaviour
 
                     panel_1.text = "Disc. Year: " + exoplanets[0].disc_year + "\n" +
                                     "Disc. Method: " + exoplanets[0].discoverymethod + "\n" +
-                                     "D. F.: " + exoplanets[0].disc_facility + "\n" +
+                                    "D. F.: " + exoplanets[0].disc_facility + "\n" +
                                     "ra: " + exoplanets[0].ra + "\n" +
-                                    "dec" + exoplanets[0].dec + "\n";
+                                    "dec: " + exoplanets[0].dec + "\n";
 
                     panel_2.text = "Disc. Year: " + exoplanets[1].disc_year + "\n" +
                                     "Disc. Method: " + exoplanets[1].discoverymethod + "\n" +
-                                     "D. F.: " + exoplanets[1].disc_facility + "\n" +
+                                    "D. F.: " + exoplanets[1].disc_facility + "\n" +
                                     "ra: " + exoplanets[1].ra + "\n" +
-                                    "dec" + exoplanets[1].dec + "\n";
+                                    "dec: " + exoplanets[1].dec + "\n";
 
-                    panel_3.text =  "Disc. Year: " + exoplanets[2].disc_year + "\n" +
+                    panel_3.text = "Disc. Year: " + exoplanets[2].disc_year + "\n" +
                                     "Disc. Method: " + exoplanets[2].discoverymethod + "\n" +
-                                     "D. F.: " + exoplanets[2].disc_facility + "\n" +
+                                    "D. F.: " + exoplanets[2].disc_facility + "\n" +
                                     "RA: " + exoplanets[2].ra + "\n" +
                                     "DEC: " + exoplanets[2].dec + "\n";
 
                     panel_4.text = "Disc. Year: " + exoplanets[3].disc_year + "\n" +
                                     "Disc. Method: " + exoplanets[3].discoverymethod + "\n" +
-                                     "D. F.: " + exoplanets[3].disc_facility + "\n" +
+                                    "D. F.: " + exoplanets[3].disc_facility + "\n" +
                                     "ra: " + exoplanets[3].ra + "\n" +
-                                    "dec" + exoplanets[3].dec + "\n";
+                                    "dec: " + exoplanets[3].dec + "\n";
 
                     panel_5.text = "Disc. Year: " + exoplanets[4].disc_year + "\n" +
                                     "Disc. Method: " + exoplanets[4].discoverymethod + "\n" +
                                     "D. F.: " + exoplanets[4].disc_facility + "\n" +
                                     "ra: " + exoplanets[4].ra + "\n" +
-                                    "dec" + exoplanets[4].dec + "\n";
+                                    "dec: " + exoplanets[4].dec + "\n";
+
+                    GlobalData.Exoplanets.Clear(); // Limpiar la lista antes de agregar nuevos datos
+                    GlobalData.Exoplanets.AddRange(exoplanets); // Agregar los nuevos exoplanetas
+                    Debug.Log("Datos guardados: " + GlobalData.Exoplanets.Count);
                 }
                 else
                 {
                     Debug.LogError("No se recibieron suficientes planetas en la respuesta.");
                 }
 
-                Debug.Log("Respuesta exoplantes: " + request.downloadHandler.text);
+                Debug.Log("Respuesta exoplanets: " + request.downloadHandler.text);
+                AssignRandomMaterials();
             }
         }
     }
+
+    private void AssignRandomMaterials()
+    {
+        // Cargar los materiales desde la carpeta
+        Material[] materials = Resources.LoadAll<Material>(textureFolderPath);
+
+        // Comprobar si hay materiales disponibles
+        if (materials.Length == 0)
+        {
+            Debug.LogError("No se encontraron materiales en la carpeta: " + textureFolderPath);
+            return;
+        }
+
+        // Crear una lista para realizar un seguimiento de los índices de los materiales utilizados
+        HashSet<int> usedIndices = new HashSet<int>();
+
+        // Asignar materiales aleatorios a las esferas y guardar el índice en cada exoplaneta
+        for (int i = 0; i < planets.Length && i < GlobalData.Exoplanets.Count; i++)
+        {
+            GameObject planet = planets[i];
+            Exoplanet exoplanet = GlobalData.Exoplanets[i];
+
+            int randomIndex;
+
+            // Asegurarse de que el índice aleatorio no se repita
+            do
+            {
+                randomIndex = UnityEngine.Random.Range(0, materials.Length);
+            } while (usedIndices.Contains(randomIndex));
+
+            // Agregar el índice a la lista de utilizados
+            usedIndices.Add(randomIndex);
+
+            // Asignar el material al planeta (sin instanciar el material)
+            if (planet.GetComponent<Renderer>() != null)
+            {
+                planet.GetComponent<Renderer>().material = materials[randomIndex];
+            }
+
+            // Guardar el índice del material en el exoplaneta
+            exoplanet.material = materials[randomIndex];
+            Debug.Log("Asignado material " + materials[randomIndex].name + " al exoplaneta: " + exoplanet.pl_name);
+        }
+
+        
+    }
+
 }

@@ -375,7 +375,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -13.424973, y: 0.34635925}
+  m_AnchoredPosition: {x: -13.424988, y: 0.34635925}
   m_SizeDelta: {x: -38.457, y: -2.3546}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &191921294
@@ -588,7 +588,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 836dc6e00bc7f834fbe8b7f94db4c52f, type: 2}
+  - {fileID: 2100000, guid: 75b43d834a69ed54094b6d9085fab9bf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -630,7 +630,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3d28cb150ad86f4a8100312a4aea7a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uvAnimationRate: {x: 0.25, y: 0}
+  uvAnimationRate: {x: 0.1, y: 0}
   textureName: _MainTex
 --- !u!114 &282803391
 MonoBehaviour:
@@ -716,7 +716,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Planeta 4
+  m_Text: Loading...
 --- !u!222 &295028269
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -885,7 +885,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Planeta 2
+  m_Text: Loading...
 --- !u!222 &360917792
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1077,7 +1077,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3d28cb150ad86f4a8100312a4aea7a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uvAnimationRate: {x: 0.25, y: 0}
+  uvAnimationRate: {x: 0.1, y: 0}
   textureName: _MainTex
 --- !u!114 &471532669
 MonoBehaviour:
@@ -1208,6 +1208,12 @@ MonoBehaviour:
   panel_3: {fileID: 1904098330}
   panel_4: {fileID: 1669234949}
   panel_5: {fileID: 266937693}
+  planets:
+  - {fileID: 282803384}
+  - {fileID: 471532662}
+  - {fileID: 1707273416}
+  - {fileID: 1003617384}
+  - {fileID: 1645033159}
 --- !u!4 &700615258
 Transform:
   m_ObjectHideFlags: 0
@@ -1855,7 +1861,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6042eaad9823b6f488f160b2bce47ac7, type: 2}
+  - {fileID: 2100000, guid: 67452e98acbad9a4da840781610da873, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1897,7 +1903,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3d28cb150ad86f4a8100312a4aea7a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uvAnimationRate: {x: 0.25, y: 0}
+  uvAnimationRate: {x: 0.1, y: 0}
   textureName: _MainTex
 --- !u!114 &1003617390
 MonoBehaviour:
@@ -1946,7 +1952,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -13.424973, y: -0.5}
+  m_AnchoredPosition: {x: -13.424988, y: -0.5}
   m_SizeDelta: {x: -38.457, y: -4.0474}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1116192680
@@ -2062,7 +2068,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Planeta 1
+  m_Text: Loading...
 --- !u!222 &1172541264
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2640,7 +2646,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Planeta 3
+  m_Text: Loading...
 --- !u!222 &1519724427
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2785,7 +2791,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3d28cb150ad86f4a8100312a4aea7a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uvAnimationRate: {x: 0.25, y: 0}
+  uvAnimationRate: {x: 0.1, y: 0}
   textureName: _MainTex
 --- !u!114 &1645033166
 MonoBehaviour:
@@ -3010,7 +3016,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3d28cb150ad86f4a8100312a4aea7a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uvAnimationRate: {x: 0.25, y: 0}
+  uvAnimationRate: {x: 0.1, y: 0}
   textureName: _MainTex
 --- !u!114 &1707273424
 MonoBehaviour:
@@ -3172,7 +3178,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Planeta 5
+  m_Text: Loading...
 --- !u!222 &1762080489
 CanvasRenderer:
   m_ObjectHideFlags: 0

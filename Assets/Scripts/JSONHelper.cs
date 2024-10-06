@@ -9,6 +9,11 @@ public static class JsonHelper
         return wrapper.array;
     }
 
+    public static T SingleFromJson<T>(string json)
+    {
+        return JsonUtility.FromJson<T>(json);
+    }
+
     [System.Serializable]
     private class Wrapper<T>
     {

@@ -1,19 +1,23 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Networking;
 using System.Collections;
-using System.Text;
-using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
+using System.Linq;
+using UnityEngine.SceneManagement;
+
+[System.Serializable]
+public class SearchBarJsonData
+{
+    public string pl_name;
+}
 
 public class SearchBar : MonoBehaviour
 {
     public InputField searchInputField; // Assign the InputField from the inspector
     public Button searchButton; // Assign the Button from the inspector
     public Text feedbackText; // Text component to display feedback messages (optional)
-    private string apiUrl = "http://172.20.10.2:8000/users/login/"; // Replace with your backend URL
+    private string url = "http://172.20.10.2:8000/exoplanets/getbyname/"; // Replace with your backend URL
 
     private void Start()
     {
@@ -21,7 +25,7 @@ public class SearchBar : MonoBehaviour
         searchButton.onClick.AddListener(Search);
     }
 
-    private void Search()
+    public void Search()
     {
         // Check if the input field text is null or empty/whitespace
         if (string.IsNullOrWhiteSpace(searchInputField.text))
@@ -38,54 +42,61 @@ public class SearchBar : MonoBehaviour
         string searchText = searchInputField.text;
 
         // Call the function to perform the search
-        SearchInBackend(searchText);
+        StartCoroutine(SearchInBackend(searchText));
     }
 
-    private async void SearchInBackend(string searchText)
+    private IEnumerator SearchInBackend(string searchText)
     {
-        // Optional: Disable the button and show a loading message
-        searchButton.interactable = false;
-        if (feedbackText != null)
+        var jsonData = new SearchBarJsonData { pl_name = searchText };
+        string json = JsonUtility.ToJson(jsonData);
+
+        // Crear la solicitud POST
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
         {
-            feedbackText.gameObject.SetActive(true);
-            feedbackText.text = "Searching...";
-        }
+            byte[] bodyRaw = new System.Text.UTF8Encoding().GetBytes(json);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
 
-        // Create the JSON data to send
-        string jsonData = JsonUtility.ToJson(new { name = searchText });
+            // Enviar la solicitud y esperar la respuesta
+            yield return request.SendWebRequest();
 
-        // Create a new request to send the JSON to the backend
-        using (var client = new HttpClient())
-        {
-            // Configurar el cliente
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            // Crear el contenido de la solicitud
-            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-            try
+            // Manejar errores
+            if (request.result != UnityWebRequest.Result.Success)
             {
-                // Enviar la solicitud POST
-                var response = await client.PostAsync(apiUrl, content);
-
-                // Asegúrate de que la respuesta fue exitosa
-                response.EnsureSuccessStatusCode();
-
-                // Leer el contenido de la respuesta
-                var responseBody = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("Respuesta de la API: " + responseBody);
-                feedbackText.gameObject.SetActive(true);
-                feedbackText.text = "Data: " + responseBody;
+                Debug.LogError("Error: " + request.error);
+                Debug.LogError("Response: " + request.downloadHandler.text);
+                if (feedbackText != null)
+                {
+                    feedbackText.gameObject.SetActive(true);
+                    feedbackText.text = "The exoplanet doesn`t exist. Try again.";
+                }
             }
-            catch (HttpRequestException e)
+            else
             {
-                Console.WriteLine("Error en la solicitud: " + e.Message);
-                feedbackText.gameObject.SetActive(true);
-                feedbackText.text = "Error: " + e.Message;
+                // Deserializar el JSON a una lista de objetos Exoplanet
+                Exoplanet exoplanet = JsonHelper.SingleFromJson<Exoplanet>(request.downloadHandler.text);
+
+                Debug.Log(exoplanet);
+                
+                if (exoplanet == null)
+                {
+                    searchInputField.text = "";
+                    feedbackText.gameObject.SetActive(true);
+                    feedbackText.text = "The exoplanet doesn`t exist. Try again.";
+                }else
+                {
+                    Debug.Log(exoplanet.pl_name);
+                    exoplanet.material = Resources.Load<Material>("RandomTextures/New Material 5");
+
+                    GlobalData.Exoplanets.Clear(); // Limpiar la lista antes de agregar nuevos datos
+                    GlobalData.Exoplanets.Add(exoplanet); // Agregar los nuevos exoplanetas
+                    Debug.Log("Datos guardados: " + GlobalData.Exoplanets[0].pl_name);
+                    SceneManager.LoadScene("Select_Angle_Scene");
+                }
+
+                
             }
         }
-
-        // Re-enable the button after the request
-        searchButton.interactable = true;
     }
 }
