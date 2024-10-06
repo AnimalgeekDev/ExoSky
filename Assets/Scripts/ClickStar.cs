@@ -35,7 +35,7 @@ public class ConstellarGuide
 [System.Serializable]
 public class SaveData
 {
-    public string user_name = PlayerPrefs.GetString("Username", "Guest");;
+    public string user_name = PlayerPrefs.GetString("Username", "Guest");
     public string pl_name = GlobalData.Exoplanets[0].pl_name;
     public List<string> coordenates = new List<string>(); // Cambiado a List<string>
 }
